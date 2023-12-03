@@ -16,7 +16,11 @@ colors = {
 "GREEN":(0,255,0),
 "BLUE" :(0,0,255),
 "BLACK":(0,0,0),
-"GREY":(127, 127, 127)
+"GREY":(127, 127, 127),
+"DARKGREY":(135, 135, 135),
+"CORAL": (240, 135, 132),
+"CORALPINK": (240, 138, 190),
+"HAUNTYINDIGO": (127, 130, 187)
 }
 
 
@@ -43,12 +47,22 @@ class Menu:
         # Level buttons
         self.LEVEL1 = Button(image=scale_image(pygame.image.load("Imagery/Circuit2_level.png"), 0.1), pos=(500, 400),
                                 text_input="Level1", font=None, base_color="GREY", hovering_color="WHITE")
-        self.LEVEL2 = Button(image=scale_image(pygame.image.load("Imagery/Circuit3_level.png"), 0.1), pos=(640, 400),
+        self.LEVEL2 = Button(image=scale_image(pygame.image.load("Imagery/Circuit3_level.png"), 0.1), pos=(700, 400),
                                 text_input="Level2", font=None, base_color="GREY", hovering_color="WHITE")
-        self.LEVEL3 = Button(image=scale_image(pygame.image.load("Imagery/Circuit4_level.png"), 0.075), pos=(790, 400),
+        self.LEVEL3 = Button(image=scale_image(pygame.image.load("Imagery/Circuit4_level.png"), 0.075), pos=(870, 400),
                                 text_input="Level3", font=None, base_color="GREY", hovering_color="WHITE")
-        self.LEVEL4 = Button(image=scale_image(pygame.image.load("Imagery/Circuit5_level.png"), 0.05), pos=(930, 400),
+        self.LEVEL4 = Button(image=scale_image(pygame.image.load("Imagery/Circuit5_level.png"), 0.05), pos=(1100, 400),
                                 text_input="Level4", font=None, base_color="GREY", hovering_color="WHITE")
+
+        # Song buttons
+        self.song1 = Button(image=scale_image(pygame.image.load("Imagery/song_button.png"), 1), pos=(700, 400),
+                            text_input="Song1", font=get_font(60), base_color="CORAL", hovering_color="WHITE")
+        self.song2 = Button(image=scale_image(pygame.image.load("Imagery/song_button.png"), 1), pos=(700, 600),
+                            text_input="Song1", font=get_font(60), base_color=colors["CORALPINK"], hovering_color="WHITE")
+        self.song3 = Button(image=scale_image(pygame.image.load("Imagery/song_button.png"), 1), pos=(700, 800),
+                          text_input="Song1", font=get_font(60), base_color=colors["HAUNTYINDIGO"], hovering_color="WHITE")
+        self.break_music = Button(image=scale_image(pygame.image.load("Imagery/song_button.png"), 1), pos=(1300, 800),
+                          text_input="No music", font=get_font(60), base_color=colors["BLACK"], hovering_color="WHITE")
 
         # Level maps
         self.level1 = scale_image(pygame.image.load("Imagery/Circuit2.png"), 0.9)

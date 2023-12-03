@@ -95,19 +95,31 @@ def move_player2(player2_car):
         player2_car.reduce_speed()
 
 
-def handle_collision(player_car, computer_car, game_info, level_mask, FINISH_POSITION, FINISH_MASK, screen):  # Have yet to move to `utils_and_classes.py`
+def handle_collision(player_car, player2_or_bot_car, game_info, level_mask, FINISH_POSITION, FINISH_MASK, screen, players_option):
     if player_car.collide(level_mask) != None:
         player_car.bounce()
+    if players_option == 2:
+        if player2_or_bot_car.collide(level_mask) != None:
+            player2_or_bot_car.bounce()
 
-    computer_finish_poi_collide = computer_car.collide(
+    computer_finish_poi_collide = player2_or_bot_car.collide(
         FINISH_MASK, *FINISH_POSITION)
     if computer_finish_poi_collide != None:
-        blit_text_center(screen, MAIN_FONT, "You lost!")
-        pygame.display.update()
-        pygame.time.wait(5000)
-        game_info.reset()
-        player_car.reset()
-        computer_car.reset()
+        if players_option == 1:
+            blit_text_center(screen, MAIN_FONT, "You lost!")
+            pygame.display.update()
+            pygame.time.wait(5000)
+            game_info.reset()
+            player_car.reset()
+            player2_or_bot_car.reset()
+        elif players_option == 2:
+            if computer_finish_poi_collide[1] == 0:
+                player2_or_bot_car.bounce()
+            else:
+                game_info.next_level()
+                player2_or_bot_car.reset()
+                player_car.reset()
+                blit_text_center(screen, MAIN_FONT, "Player 2 won!")
 
     player_finish_poi_collide = player_car.collide(
         FINISH_MASK, *FINISH_POSITION)
@@ -116,8 +128,10 @@ def handle_collision(player_car, computer_car, game_info, level_mask, FINISH_POS
             player_car.bounce()
         else:
             game_info.next_level()
+            player2_or_bot_car.reset()
             player_car.reset()
-            computer_car.next_level(game_info.level)
+            if players_option == 1:
+                player2_or_bot_car.next_level(game_info.level)
 
 
 #   #   #   #   #   CLASSES     #   #   #   #   #

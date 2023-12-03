@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from pygame import mixer
 import sys, time, math
 from utils_and_classes import *
 from menu_and_buttons import Menu
@@ -23,7 +24,7 @@ level4_path = [(530, 460), (330, 410), (335, 310), (450, 190), (570, 300), (650,
 # Cars
 RED_CAR = scale_image(pygame.image.load("Imagery/red-car.png"), 0.6)
 GREEN_CAR = scale_image(pygame.image.load("Imagery/green-car.png"), 0.6)
-WHITE_CAR = scale_image(pygame.image.load("Imagery/White_car.png"), 0.6)
+WHITE_CAR = scale_image(pygame.image.load("Imagery/white-car.png"), 0.6)
 
 # (CAR) OBJECTS
 game_info = GameInfo()
@@ -60,10 +61,49 @@ def main_menu(screen, BACKGROUND):  # Main Menu Screen
                 if obj_menu.PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                     play_screen()
                 if obj_menu.OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    pass
+                    options_menu()
                 if obj_menu.QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     sys.exit()
+
+#
+
+def options_menu():
+
+    while True:
+
+        pygame.display.update()
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+        screen.fill("DARKGREY")
+
+        OPTIONS_TXT = get_font(45).render("Pick another song?", True, "WHITE")
+        OPTIONS_RECT = OPTIONS_TXT.get_rect(center=(640, 260))
+        screen.blit(OPTIONS_TXT, OPTIONS_RECT)
+
+        for button in [
+            obj_menu.BACK_BUTTON, obj_menu.song1, obj_menu.song2, obj_menu.song3, obj_menu.break_music
+        ]:
+            button.changeColor(OPTIONS_MOUSE_POS)
+            button.update(screen)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if obj_menu.BACK_BUTTON.checkForInput(OPTIONS_MOUSE_POS):
+                    main_menu(screen, GRASS)
+                if obj_menu.song1.checkForInput(OPTIONS_MOUSE_POS):
+                    mixer.music.load("Music/sonicintheholobeach.wav")
+                    mixer.music.play()
+                if obj_menu.song2.checkForInput(OPTIONS_MOUSE_POS):
+                    mixer.music.load("Music/juparo.wav")
+                    mixer.music.play()
+                if obj_menu.song3.checkForInput(OPTIONS_MOUSE_POS):
+                    mixer.music.load("Music/aqualotic.wav")
+                    mixer.music.play()
+                if obj_menu.break_music.checkForInput(OPTIONS_MOUSE_POS):
+                    mixer.music.stop()
 
 #
 
@@ -105,7 +145,7 @@ def level_select(players_amount):
 
         pygame.display.update()
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
-        screen.fill("GRAY")  # The grass is always greener on the other side :)
+        screen.fill("DARKGREY")  # The grass is always greener on the other side :)
 
         PLAY_TXT = get_font(45).render("Choose your map/circuit/level", True, "WHITE")
         PLAY_RECT = PLAY_TXT.get_rect(center=(640, 260))
@@ -144,6 +184,9 @@ def level_select(players_amount):
 #   #   #   #  #    ACTUAL PLAY_GAME FUNCTION      #   #   #   #   #
 
 def play_game(players_option, circuit, circuit_borders, c_width, c_height):
+    music_end = pygame.USEREVENT + 1
+    mixer.music.set_endevent(music_end)
+
     run = True
     clock = pygame.time.Clock()
 
@@ -162,7 +205,7 @@ def play_game(players_option, circuit, circuit_borders, c_width, c_height):
 
         FINISH = scale_image(pygame.image.load("Imagery/finish.png"), 0.9)
         FINISH_MASK = pygame.mask.from_surface(FINISH)
-        FINISH_POSITION = (570, 440)  # Adjust later
+        FINISH_POSITION = (570, 440)
     elif circuit == obj_menu.level3:
         player_car = PlayerCar(4, 4, RED_CAR, (220, 150))
         player2_car = PlayerCar(4, 4, WHITE_CAR, (190, 150))
@@ -170,7 +213,7 @@ def play_game(players_option, circuit, circuit_borders, c_width, c_height):
 
         FINISH = scale_image(pygame.image.load("Imagery/finish.png"), 1)
         FINISH_MASK = pygame.mask.from_surface(FINISH)
-        FINISH_POSITION = (180, 200)  # Adjust later
+        FINISH_POSITION = (180, 200)
     elif circuit == obj_menu.level4:
         player_car = PlayerCar(4, 4, RED_CAR, (560, 575))
         player2_car = PlayerCar(4, 4, WHITE_CAR, (585, 575))
@@ -178,11 +221,10 @@ def play_game(players_option, circuit, circuit_borders, c_width, c_height):
 
         FINISH = scale_image(pygame.image.load("Imagery/finish.png"), 1.5)
         FINISH_MASK = pygame.mask.from_surface(FINISH)
-        FINISH_POSITION = (470, 630)  # Adjust later
+        FINISH_POSITION = (470, 630)
 
     images = [(GRASS, (0, 0)), (circuit, (0, 0)),
         (FINISH, FINISH_POSITION), (circuit_borders, (0, 0))]
-    camera = Camera(player_car, c_width, c_height)
 
     if players_option == 1:
         player2_or_bot_car = computer_car
@@ -190,6 +232,7 @@ def play_game(players_option, circuit, circuit_borders, c_width, c_height):
         player2_or_bot_car = player2_car
 
     while run:
+
         pygame.init()
         clock.tick(FPS)
 
@@ -210,7 +253,7 @@ def play_game(players_option, circuit, circuit_borders, c_width, c_height):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-                    break
+                    sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if obj_menu.PAUSE_BUTTON.checkForInput(PLAY_MOUSE_POS):
                         pause_screen(players_option, circuit, circuit_borders, c_width, c_height)
@@ -221,7 +264,9 @@ def play_game(players_option, circuit, circuit_borders, c_width, c_height):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-                break
+                sys.exit()
+            if event.type == music_end:
+                mixer.music.play()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if obj_menu.PAUSE_BUTTON.checkForInput(PLAY_MOUSE_POS):
                     pause_screen(players_option, circuit, circuit_borders, c_width, c_height)
@@ -233,10 +278,11 @@ def play_game(players_option, circuit, circuit_borders, c_width, c_height):
                         ]:
                 button.changeColor(PLAY_MOUSE_POS)
                 button.update(screen)
+                pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     run = False
-                    break
+                    sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if obj_menu.PAUSE_BUTTON.checkForInput(PLAY_MOUSE_POS):
                         pause_screen(players_option, circuit, circuit_borders, c_width, c_height)
@@ -248,7 +294,10 @@ def play_game(players_option, circuit, circuit_borders, c_width, c_height):
                 move_player2(player2_or_bot_car)
 
             circuit_mask = pygame.mask.from_surface(circuit_borders)
-            handle_collision(player_car, player2_or_bot_car, game_info, circuit_mask, FINISH_POSITION, FINISH_MASK, screen)
+            if players_option == 1:
+                handle_collision(player_car, player2_or_bot_car, game_info, circuit_mask, FINISH_POSITION, FINISH_MASK, screen, 1)
+            elif players_option == 2:
+                handle_collision(player_car, player2_or_bot_car, game_info, circuit_mask, FINISH_POSITION, FINISH_MASK, screen, 2)
 
             if game_info.game_finished():
                 blit_text_center(screen, MAIN_FONT, "You won the game!")
@@ -289,13 +338,18 @@ if __name__ == '__main__':
     pygame.font.init()
 
     # Colors
+    global colors
     colors = {
     "WHITE":(255,255,255),
     "RED"  :(255,0,0),
     "GREEN":(0,255,0),
     "BLUE" :(0,0,255),
     "BLACK":(0,0,0),
-    "GREY":(127, 127, 127)
+    "GREY":(127, 127, 127),
+    "DARKGREY":(135, 135, 135),
+    "CORAL": (240, 135, 132),
+    "CORALPINK": (240, 140, 190),
+    "HAUNTYINDIGO": (127, 130, 187)
     }
 
     MAIN_FONT = pygame.font.SysFont("comicsans", 44)
@@ -307,6 +361,11 @@ if __name__ == '__main__':
     pygame.display.set_caption("Racing gimma")
 
     FPS = 60
+
+    # Music :)
+    mixer.init()
+    mixer.music.load('Music/sonicintheholobeach.wav')
+    mixer.music.play()
 
     pygame.display.set_caption("Racing Game!")
 
