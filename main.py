@@ -172,13 +172,13 @@ def play_game(players_option, circuit, circuit_borders, c_width, c_height):
         FINISH_MASK = pygame.mask.from_surface(FINISH)
         FINISH_POSITION = (180, 200)  # Adjust later
     elif circuit == obj_menu.level4:
-        player_car = PlayerCar(4, 4, RED_CAR, (400, 430))
-        player2_car = PlayerCar(4, 4, WHITE_CAR, (430, 430))
-        computer_car = ComputerCar(2, 4, level4_path, GREEN_CAR, (430, 430))
+        player_car = PlayerCar(4, 4, RED_CAR, (560, 575))
+        player2_car = PlayerCar(4, 4, WHITE_CAR, (585, 575))
+        computer_car = ComputerCar(2, 4, level4_path, GREEN_CAR, (585, 575))
 
         FINISH = scale_image(pygame.image.load("Imagery/finish.png"), 1.5)
         FINISH_MASK = pygame.mask.from_surface(FINISH)
-        FINISH_POSITION = (470, 510)  # Adjust later
+        FINISH_POSITION = (470, 630)  # Adjust later
 
     images = [(GRASS, (0, 0)), (circuit, (0, 0)),
         (FINISH, FINISH_POSITION), (circuit_borders, (0, 0))]
